@@ -1025,7 +1025,7 @@ func TestUpdateFieldCompatMul(t *testing.T) {
 	providers := shareddata.AllProviders().
 		// BigDoubles and Scalars contain numbers that produces +INF on compat,
 		// validation error on target upon $mul operation.
-		Remove("BigDoubles", "Scalars")
+		Remove(shareddata.BigDoubles, shareddata.Scalars)
 
 	testCases := map[string]updateCompatTestCase{
 		"Int32": {

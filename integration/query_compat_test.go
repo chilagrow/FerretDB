@@ -25,6 +25,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/FerretDB/FerretDB/integration/setup"
+	"github.com/FerretDB/FerretDB/integration/shareddata"
 )
 
 // queryCompatTestCase describes query compatibility test case.
@@ -41,13 +42,21 @@ type queryCompatTestCase struct {
 	skipForTigris string // skip test for Tigris
 }
 
-// testQueryCompat tests query compatibility test cases.
+// testQueryCompat tests query compatibility test cases with all providers.
 func testQueryCompat(t *testing.T, testCases map[string]queryCompatTestCase) {
+	t.Helper()
+
+	testQueryCompatWithProviders(t, shareddata.AllProviders(), testCases)
+}
+
+// testQueryCompat tests query compatibility test cases with given providers.
+func testQueryCompatWithProviders(t *testing.T, providers []shareddata.Provider, testCases map[string]queryCompatTestCase) {
 	t.Helper()
 
 	// Use shared setup because find queries can't modify data.
 	// TODO Use read-only user. https://github.com/FerretDB/FerretDB/issues/1025
-	ctx, targetCollections, compatCollections := setup.SetupCompat(t)
+	s := setup.SetupCompatWithOpts(t, &setup.SetupCompatOpts{Providers: providers})
+	ctx, targetCollections, compatCollections := s.Ctx, s.TargetCollections, s.CompatCollections
 
 	for name, tc := range testCases {
 		name, tc := name, tc

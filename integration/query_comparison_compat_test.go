@@ -1053,6 +1053,9 @@ func TestQueryComparisonCompatLte(t *testing.T) {
 }
 
 func TestQueryComparisonCompatNin(t *testing.T) {
+	// TODO https://github.com/FerretDB/FerretDB/issues/2291
+	providers := shareddata.AllProviders().Remove(shareddata.ArrayAndDocuments)
+
 	t.Parallel()
 
 	var scalarDataTypesFilter bson.A
@@ -1091,10 +1094,13 @@ func TestQueryComparisonCompatNin(t *testing.T) {
 		},
 	}
 
-	testQueryCompat(t, testCases)
+	testQueryCompatWithProviders(t, providers, testCases)
 }
 
 func TestQueryComparisonCompatIn(t *testing.T) {
+	// TODO https://github.com/FerretDB/FerretDB/issues/2291
+	providers := shareddata.AllProviders().Remove(shareddata.ArrayAndDocuments)
+
 	t.Parallel()
 
 	var scalarDataTypesFilter bson.A
@@ -1133,7 +1139,7 @@ func TestQueryComparisonCompatIn(t *testing.T) {
 		},
 	}
 
-	testQueryCompat(t, testCases)
+	testQueryCompatWithProviders(t, providers, testCases)
 }
 
 func TestQueryComparisonCompatNe(t *testing.T) {
