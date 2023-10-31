@@ -98,19 +98,16 @@ var Int32s Values = map[string]any{
 }
 
 // Name implement Provider interface.
-func (v Values) Name() string {
+func (vs Values) Name() string {
 	return "Int32s"
 }
 
 // Docs implement Provider interface.
-func (v Values) Docs() []bson.D {
-	res := make([]bson.D, 0, len(v))
+func (vs Values) Docs() []bson.D {
+	res := make([]bson.D, 0, len(vs))
 
-	for id, v := range v {
-		res = append(res, bson.D{
-			{"_id", id},
-			{"v", v},
-		})
+	for id, v := range vs {
+		res = append(res, bson.D{{"_id", id}, {"v", v}})
 	}
 
 	return res
