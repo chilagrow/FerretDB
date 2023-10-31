@@ -20,15 +20,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/FerretDB/FerretDB/integration/setup"
 )
 
-// Run against MongoDB (from integration directory):
-// go test -count=1 -run='TestQueryLogicalAnd' -target-url=mongodb://127.0.0.1:47017/ -target-backend=mongodb .
-//
 // Run against FerretDB (from integration directory):
 // go test -count=1 -run='TestQueryLogicalAnd' -target-backend=ferretdb-postgresql -target-tls -postgresql-url=postgres://username@127.0.0.1:5432/ferretdb .
 func TestQueryLogicalAnd(t *testing.T) {
@@ -44,9 +40,8 @@ func TestQueryLogicalAnd(t *testing.T) {
 	// {{"_id", "int32-max"},  {"v", int32(math.MaxInt32)}}, // 2147483647
 
 	for name, tc := range map[string]struct {
-		filter bson.D             // required, filter to be tested
-		res    []bson.D           // expected result
-		err    mongo.CommandError // expected error
+		filter bson.D   // required, filter to be tested
+		res    []bson.D // expected result
 	}{
 		"Two": {
 			// {$and: [{v: {$gt: 0}}, {v: {$lt: 42}}]}
@@ -57,10 +52,7 @@ func TestQueryLogicalAnd(t *testing.T) {
 				},
 			}},
 			res: []bson.D{
-				{
-					{"_id", "int32-1"},
-					{"v", int32(1)},
-				},
+				{{"_id", "int32-1"}, {"v", int32(1)}},
 			},
 		},
 	} {
@@ -69,16 +61,10 @@ func TestQueryLogicalAnd(t *testing.T) {
 			t.Parallel()
 
 			opts := options.Find().SetSort(bson.D{{"v", 1}})
-
 			cursor, err := collection.Find(ctx, tc.filter, opts)
-
-			if tc.res == nil {
-				AssertEqualCommandError(t, tc.err, err)
-				return
-			}
+			require.NoError(t, err)
 
 			res := FetchAll(t, ctx, cursor)
-
 			require.NoError(t, err)
 			AssertEqualDocumentsSlice(t, tc.res, res)
 		})
