@@ -28,12 +28,28 @@ import (
 	"github.com/FerretDB/FerretDB/v2/tools/github"
 )
 
-func TestReal(t *testing.T) {
+func TestBlogs(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping in -short mode")
 	}
 
 	blogFiles, err := filepath.Glob(filepath.Join("..", "..", "website", "blog", "*.md"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = checkBlogFiles(blogFiles)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestDocs(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping in -short mode")
+	}
+
+	blogFiles, err := filepath.Glob(filepath.Join("..", "..", "website", "docs", "*.md"))
 	if err != nil {
 		t.Fatal(err)
 	}
